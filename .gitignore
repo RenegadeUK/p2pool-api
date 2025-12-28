@@ -48,5 +48,8 @@ config/*
 p2pool-logs/*
 !p2pool-logs/.gitkeep
 
+# Generated icons (keep SVG source, exclude generated PNG)
+# static/icon.png
+
 # Docker
 *.log

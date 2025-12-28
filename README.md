@@ -212,6 +212,19 @@ def find_errors(filename):
     return response.json()['matches']
 ```
 
+## Icons
+
+The project includes P2Pool-themed icons:
+- **favicon.svg** - Browser favicon with blockchain design
+- **icon.svg** - 256x256 icon for container platforms (Unraid, etc.)
+
+To generate a PNG version for Unraid:
+```bash
+./generate-icon.sh
+```
+
+This will create `static/icon.png` (256x256) suitable for Unraid and other platforms.
+
 ## File Structure
 
 ```
@@ -220,10 +233,14 @@ p2pool-api/
 ├── requirements.txt       # Python dependencies
 ├── Dockerfile            # Docker image definition
 ├── docker-compose.yml    # Docker Compose configuration
+├── generate-icon.sh      # Icon conversion script
 ├── templates/            # HTML templates
 │   ├── base.html        # Base template with v0 styling
 │   ├── index.html       # Log list page
 │   └── log_view.html    # Individual log viewer
+├── static/               # Static files
+│   ├── favicon.svg      # Browser favicon
+│   └── icon.svg         # 256x256 container icon
 ├── config/              # Application configuration (mounted)
 └── p2pool-logs/         # P2Pool logs directory (mounted)
 ```
