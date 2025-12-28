@@ -160,8 +160,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>⛏️ P2Pool Log Viewer</h1>
-            <div class="subtitle">Monitoring P2Pool Mining Logs</div>
+            <h1>⛏️ P2Pool API Viewer</h1>
+            <div class="subtitle">Monitoring P2Pool API Data</div>
         </header>
 
         <div class="content">
@@ -169,13 +169,13 @@
         </div>
 
         <footer>
-            <div>P2Pool API - Read-only log monitoring system</div>
+            <div>P2Pool API - Read-only monitoring system</div>
             <div class="api-info">
                 <strong>API Endpoints:</strong><br>
-                <span class="endpoint">GET /api/logs</span> - List all logs |
-                <span class="endpoint">GET /api/log/{filename}</span> - Get log content |
-                <span class="endpoint">GET /api/log/{filename}/tail/{lines}</span> - Tail log |
-                <span class="endpoint">GET /api/log/{filename}/search/{query}</span> - Search log |
+                <span class="endpoint">GET /api/logs</span> - List all files |
+                <span class="endpoint">GET /api/log/{filepath}</span> - Get file content |
+                <span class="endpoint">GET /api/log/{filepath}/tail/{lines}</span> - Tail file |
+                <span class="endpoint">GET /api/log/{filepath}/search/{query}</span> - Search file |
                 <span class="endpoint">GET /api/status</span> - System status
             </div>
         </footer>

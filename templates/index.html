@@ -3,42 +3,56 @@
 {% block title %}P2Pool Logs - Home{% endblock %}
 
 {% block content %}
-<h2 style="color: #0f0; margin-bottom: 20px; text-shadow: 0 0 10px #0f0;">📋 Available Log Files</h2>
+<h2 style="color: #0f0; margin-bottom: 20px; text-shadow: 0 0 10px #0f0;">📋 P2Pool API Files</h2>
 
 {% if log_files %}
     <div style="margin-bottom: 15px; color: #0a0;">
-        Found {{ log_files|length }} log file(s)
+        Found {{ log_files|length }} file(s)
     </div>
     
-    <ul class="log-list">
-        {% for log in log_files %}
-        <li class="log-item">
-            <div class="log-name">
-                <a href="{{ url_for('view_log', filename=log.name) }}">📄 {{ log.name }}</a>
-            </div>
-            <div class="log-meta">
-                Size: {{ "%.2f"|format(log.size / 1024) }} KB | 
-                Modified: {{ log.modified }}
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
+    {% set categories = {} %}
+    {% for log in log_files %}
+        {% set _ = categories.update({log.category: categories.get(log.category, []) + [log]}) %}
+    {% endfor %}
+    
+    {% for category in categories|sort %}
+        <div style="margin-bottom: 25px;">
+            <h3 style="color: #0f0; font-size: 1.1em; margin-bottom: 10px; text-shadow: 0 0 5px #0f0;">
+                📁 {{ '/' if category == 'root' else '/' + category + '/' }}
+            </h3>
+            <ul class="log-list">
+                {% for log in categories[category] %}
+                <li class="log-item">
+                    <div class="log-name">
+                        <a href="{{ url_for('view_log', filename=log.name) }}">📄 {{ log.display_name }}</a>
+                    </div>
+                    <div class="log-meta">
+                        Path: {{ log.name }} | 
+                        Size: {{ "%.2f"|format(log.size / 1024) }} KB | 
+                        Modified: {{ log.modified }}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
 {% else %}
     <div style="padding: 40px; text-align: center; color: #0a0;">
         <div style="font-size: 3em;">⚠️</div>
-        <div style="margin-top: 20px; font-size: 1.2em;">No log files found in /data directory</div>
+        <div style="margin-top: 20px; font-size: 1.2em;">No files found in /data directory</div>
         <div style="margin-top: 10px; font-size: 0.9em;">
-            Make sure P2Pool logs are mounted to the /data volume
+            Make sure P2Pool API files are mounted to the /data volume
         </div>
     </div>
 {% endif %}
 
 <div style="margin-top: 30px; padding: 15px; border: 1px solid #0a0; background: #000a00;">
-    <strong style="color: #0f0;">💡 Quick Access:</strong>
-    <ul style="margin-top: 10px; margin-left: 20px; color: #0a0;">
-        <li>Click on any log file to view its contents</li>
-        <li>Use API endpoints for programmatic access</li>
-        <li>Logs are read-only from the /data volume</li>
+    <strong style="color: #0f0;">💡 P2Pool API Structure:</strong>
+    <ul style="margin-top: 10px; margin-left: 20px; color: #0a0; font-family: monospace;">
+        <li>/local/ - Local node data (console, stratum, p2p, merge_mining)</li>
+        <li>/network/ - Network statistics</li>
+        <li>/pool/ - Pool statistics</li>
+        <li>/stats_mod - Stats module data</li>
     </ul>
 </div>
 {% endblock %}

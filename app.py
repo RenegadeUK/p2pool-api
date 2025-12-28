@@ -15,56 +15,68 @@ os.makedirs(CONFIG_DIR, exist_ok=True)
 
 
 def get_log_files():
-    """Get all log files from the data directory"""
+    """Get all files from the data directory recursively"""
     log_files = []
     try:
         data_path = Path(DATA_DIR)
         if data_path.exists():
-            for log_file in data_path.glob('*.log'):
-                stats = log_file.stat()
-                log_files.append({
-                    'name': log_file.name,
-                    'path': str(log_file),
-                    'size': stats.st_size,
-                    'modified': datetime.fromtimestamp(stats.st_mtime).isoformat()
-                })
-            # Also check for txt files
-            for log_file in data_path.glob('*.txt'):
-                stats = log_file.stat()
-                log_files.append({
-                    'name': log_file.name,
-                    'path': str(log_file),
-                    'size': stats.st_size,
-                    'modified': datetime.fromtimestamp(stats.st_mtime).isoformat()
-                })
+            # Recursively find all files
+            for file_path in data_path.rglob('*'):
+                if file_path.is_file():
+                    try:
+                        stats = file_path.stat()
+                        relative_path = file_path.relative_to(data_path)
+                        log_files.append({
+                            'name': str(relative_path),
+                            'display_name': file_path.name,
+                            'path': str(file_path),
+                            'size': stats.st_size,
+                            'modified': datetime.fromtimestamp(stats.st_mtime).isoformat(),
+                            'category': str(relative_path.parent) if relative_path.parent != Path('.') else 'root'
+                        })
+                    except Exception as e:
+                        print(f"Error processing file {file_path}: {e}")
     except Exception as e:
-        print(f"Error reading log files: {e}")
+        print(f"Error reading data files: {e}")
     
     return sorted(log_files, key=lambda x: x['modified'], reverse=True)
 
 
 def read_log_file(filename):
-    """Read content of a log file"""
+    """Read content of a file (supports relative paths)"""
     try:
         file_path = Path(DATA_DIR) / filename
-        if file_path.exists() and file_path.is_file():
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+        # Ensure the resolved path is still within DATA_DIR (security check)
+        resolved_path = file_path.resolve()
+        data_dir_resolved = Path(DATA_DIR).resolve()
+        if not str(resolved_path).startswith(str(data_dir_resolved)):
+            print(f"Security: Attempted to access file outside data directory: {filename}")
+            return None
+        
+        if resolved_path.exists() and resolved_path.is_file():
+            with open(resolved_path, 'r', encoding='utf-8', errors='ignore') as f:
                 return f.read()
     except Exception as e:
-        print(f"Error reading log file {filename}: {e}")
+        print(f"Error reading file {filename}: {e}")
     return None
 
 
 def tail_log_file(filename, lines=100):
-    """Get last N lines from a log file"""
+    """Get last N lines from a file (supports relative paths)"""
     try:
         file_path = Path(DATA_DIR) / filename
-        if file_path.exists() and file_path.is_file():
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+        # Security check
+        resolved_path = file_path.resolve()
+        data_dir_resolved = Path(DATA_DIR).resolve()
+        if not str(resolved_path).startswith(str(data_dir_resolved)):
+            return []
+        
+        if resolved_path.exists() and resolved_path.is_file():
+            with open(resolved_path, 'r', encoding='utf-8', errors='ignore') as f:
                 all_lines = f.readlines()
                 return all_lines[-lines:] if len(all_lines) > lines else all_lines
     except Exception as e:
-        print(f"Error tailing log file {filename}: {e}")
+        print(f"Error tailing file {filename}: {e}")
     return []
 
 

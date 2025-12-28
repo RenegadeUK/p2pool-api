@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}{{ filename }} - P2Pool Logs{% endblock %}
+{% block title %}{{ filename }} - P2Pool API{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('index') }}" class="back-link">← Back to Log List</a>
+<a href="{{ url_for('index') }}" class="back-link">← Back to File List</a>
 
 <h2 style="color: #0f0; margin-bottom: 20px; text-shadow: 0 0 10px #0f0;">📄 {{ filename }}</h2>
 
 <div style="margin-bottom: 15px; color: #0a0;">
-    <strong>Log Content:</strong> {{ content.count('\n') + 1 }} lines
+    <strong>Content:</strong> {{ content.count('\n') + 1 }} lines
 </div>
 
 <div class="log-content">{{ content }}</div>
 
 <div style="margin-top: 20px; padding: 15px; border: 1px solid #0a0; background: #000a00;">
-    <strong style="color: #0f0;">🔗 API Access for this log:</strong>
+    <strong style="color: #0f0;">🔗 API Access for this file:</strong>
     <ul style="margin-top: 10px; margin-left: 20px; color: #0a0; font-family: 'Courier New', monospace;">
         <li>Full content: <span style="color: #0f0;">/api/log/{{ filename }}</span></li>
         <li>Last 100 lines: <span style="color: #0f0;">/api/log/{{ filename }}/tail</span></li>
