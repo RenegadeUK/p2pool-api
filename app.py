@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 # Configuration
 DATA_DIR = os.environ.get('DATA_DIR', '/data')
@@ -179,6 +179,12 @@ def api_status():
 def health():
     """Health check endpoint"""
     return jsonify({'status': 'healthy'}), 200
+
+
+@app.route('/favicon.ico')
+def favicon():
+    """Serve favicon"""
+    return send_from_directory(app.static_folder, 'favicon.svg', mimetype='image/svg+xml')
 
 
 if __name__ == '__main__':
