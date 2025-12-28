@@ -88,7 +88,7 @@ def index():
     return render_template('index.html', log_files=log_files)
 
 
-@app.route('/log/<filename>')
+@app.route('/log/<path:filename>')
 def view_log(filename):
     """View a specific log file"""
     content = read_log_file(filename)
@@ -109,7 +109,7 @@ def api_list_logs():
     })
 
 
-@app.route('/api/log/<filename>')
+@app.route('/api/log/<path:filename>')
 def api_get_log(filename):
     """API: Get full content of a log file"""
     content = read_log_file(filename)
@@ -127,8 +127,8 @@ def api_get_log(filename):
     })
 
 
-@app.route('/api/log/<filename>/tail')
-@app.route('/api/log/<filename>/tail/<int:lines>')
+@app.route('/api/log/<path:filename>/tail')
+@app.route('/api/log/<path:filename>/tail/<int:lines>')
 def api_tail_log(filename, lines=100):
     """API: Get last N lines of a log file"""
     log_lines = tail_log_file(filename, lines)
@@ -146,7 +146,7 @@ def api_tail_log(filename, lines=100):
     })
 
 
-@app.route('/api/log/<filename>/search/<query>')
+@app.route('/api/log/<path:filename>/search/<query>')
 def api_search_log(filename, query):
     """API: Search for a term in a log file"""
     content = read_log_file(filename)
