@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  p2pool-api:
+    # Use pre-built image from GitHub Container Registry
+    # image: ghcr.io/OWNER/p2pool-api:latest
+    # OR build locally:
+    build: .
+    container_name: p2pool-api
+    ports:
+      - "5000:5000"
+    volumes:
+      # Config directory - read/write for saving application data
+      - ./config:/config
+      # Data directory - read-only mount for P2Pool logs
+      # Replace './p2pool-logs' with the actual path to your P2Pool logs
+      # or use a volume from another container
+      - ./p2pool-logs:/data:ro
+    environment:
+      - DATA_DIR=/data
+      - CONFIG_DIR=/config
+    restart: unless-stopped
+    networks:
+      - p2pool-network
+
+networks:
+  p2pool-network:
+    driver: bridge
+
+# Example: If you want to share logs from another P2Pool container
+# Uncomment and modify this section:
+#
+# services:
+#   p2pool:
+#     image: your-p2pool-image
+#     container_name: p2pool
+#     volumes:
+#       - p2pool-logs:/path/to/p2pool/logs
+#     networks:
+#       - p2pool-network
+#
+#   p2pool-api:
+#     build: .
+#     container_name: p2pool-api
+#     ports:
+#       - "5000:5000"
+#     volumes:
+#       - ./config:/config
+#       - p2pool-logs:/data:ro  # Read-only mount of P2Pool logs
+#     depends_on:
+#       - p2pool
+#     networks:
+#       - p2pool-network
+#
+# volumes:
+#   p2pool-logs:
